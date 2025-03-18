@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Joc Memorie - Hello Kitty</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f8f8;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #ff66b2;
+            padding: 20px;
+            text-align: center;
+        }
+        header .logo img {
+            width: 100px;
+            max-width: 100%;
+        }
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        nav ul li {
+            display: inline;
+            margin-right: 20px;
+        }
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        main {
+            padding: 20px;
+        }
+        footer {
+            text-align: center;
+            padding: 10px;
+            background-color: #ff66b2;
+            color: #fff;
+        }
+        .game-container {
+            display: grid;
+            grid-template-columns: repeat(4, 150px);
+            gap: 10px;
+            justify-content: center;
+            margin-top: 50px;
+        }
+        .card {
+            width: 150px;
+            height: 150px;
+            background-color: #ff66b2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .card img {
+            width: 100%;
+            display: none;
+            border-radius: 10px;
+        }
+        .flipped img {
+            display: block;
+        }
+        .matched {
+            background-color: #b5e5b5;
+            pointer-events: none;
+        }
+        .message {
+            text-align: center;
+            font-size: 24px;
+            margin-top: 20px;
+            color: #ff66b2;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="https://play-lh.googleusercontent.com/48PbW8sLjW97zQiSpTHKoljwNDhzCX3NSRMUu2SSNI0dagwxC4z-IhpAKYadtgiCLBA=w526-h296-rw" alt="Hello Kitty Logo">
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html">Acasă</a></li>
+                <li><a href="poze.html">Poze cu noi</a></li>
+                <li><a href="playlisturi.html">Playlisturile noastre</a></li>
+                <li><a href="joculete.html">Joculeț</a></li>
+                <li><a href="mesaj.html">Mesaj pentru tine</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="game-container" id="gameContainer">
+            <!-- Cărțile vor fi adăugate dinamic cu JavaScript -->
+        </section>
+        <div class="message" id="message"></div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Site pentru printesa mea</p>
+    </footer>
+
+    <script>
+        const images = [
+            "pic1.jpeg", // Adaugă căile imaginii tale
+            "pic2.jpeg",
+            "pic3.jpeg",
+            "pic4.jpeg",
+            "pic5.jpeg", // Poze cu Hello Kitty
+            "pic6.jpeg",
+            "pic7.jpeg",
+            "pic8.jpeg",
+        ];
+        let shuffledImages = [...images, ...images]; // Duplicăm imaginile pentru perechi
+        shuffledImages = shuffledImages.sort(() => Math.random() - 0.5); // Amestecăm imaginile
+
+        let flippedCards = [];
+        let matchedCards = [];
+        let cardCount = shuffledImages.length;
+        let isBoardLocked = false;
+
+        const gameContainer = document.getElementById("gameContainer");
+        const message = document.getElementById("message");
+
+        // Creăm cărțile
+        shuffledImages.forEach((image, index) => {
+            const card = document.createElement("div");
+            card.classList.add("card");
+            card.dataset.image = image;
+            card.dataset.index = index;
+
+            const img = document.createElement("img");
+            img.src = image;
+            card.appendChild(img);
+
+            card.addEventListener("click", () => flipCard(card));
+            gameContainer.appendChild(card);
+        });
+
+        // Întoarcem cartea
+        function flipCard(card) {
+            if (isBoardLocked || card.classList.contains("flipped") || card.classList.contains("matched")) {
+                return;
+            }
+
+            card.classList.add("flipped");
+            flippedCards.push(card);
+
+            if (flippedCards.length === 2) {
+                checkMatch();
+            }
+        }
+
+        // Verificăm dacă cele două cărți sunt corecte
+        function checkMatch() {
+            isBoardLocked = true;
+
+            const [card1, card2] = flippedCards;
+            if (card1.dataset.image === card2.dataset.image) {
+                matchedCards.push(card1, card2);
+                card1.classList.add("matched");
+                card2.classList.add("matched");
+                flippedCards = [];
+
+                if (matchedCards.length === cardCount) {
+                    message.textContent = "Luv u boo<3";
+                }
+
+                isBoardLocked = false;
+            } else {
+                setTimeout(() => {
+                    card1.classList.remove("flipped");
+                    card2.classList.remove("flipped");
+                    flippedCards = [];
+                    isBoardLocked = false;
+                }, 1000);
+            }
+        }
+    </script>
+</body>
+</html>
